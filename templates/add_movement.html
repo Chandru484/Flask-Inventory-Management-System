@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Movement - Inventory Management System{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Add New Product Movement</h1>
+    <a href="{{ url_for('movements') }}" class="btn btn-secondary">Back to Movements</a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="POST">
+            <div class="mb-3">
+                <label for="product_id" class="form-label">Product</label>
+                <select class="form-select" id="product_id" name="product_id" required>
+                    <option value="">Select a product</option>
+                    {% for product in products %}
+                    <option value="{{ product.product_id }}">{{ product.product_id }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="from_location" class="form-label">From Location (leave empty for inward movement)</label>
+                <select class="form-select" id="from_location" name="from_location">
+                    <option value="">None (Inward Movement)</option>
+                    {% for location in locations %}
+                    <option value="{{ location.location_id }}">{{ location.location_id }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="to_location" class="form-label">To Location (leave empty for outward movement)</label>
+                <select class="form-select" id="to_location" name="to_location">
+                    <option value="">None (Outward Movement)</option>
+                    {% for location in locations %}
+                    <option value="{{ location.location_id }}">{{ location.location_id }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="qty" class="form-label">Quantity</label>
+                <input type="number" class="form-control" id="qty" name="qty" min="1" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Save Movement</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Simple validation to ensure at least one location is selected
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const fromLocation = document.getElementById('from_location').value;
+        const toLocation = document.getElementById('to_location').value;
+        
+        if (!fromLocation && !toLocation) {
+            e.preventDefault();
+            alert('Either From Location or To Location must be selected!');
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Location - Inventory Management System{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Edit Location</h1>
+    <a href="{{ url_for('locations') }}" class="btn btn-secondary">Back to Locations</a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="POST">
+            <div class="mb-3">
+                <label for="location_id" class="form-label">Location ID</label>
+                <input type="text" class="form-control" id="location_id" name="location_id" value="{{ location.location_id }}" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Update Location</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

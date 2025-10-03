@@ -1,0 +1,185 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - StockMaster{% endblock %}
+
+{% block content %}
+<div class="page-header mb-4">
+    <h1 class="page-title">Dashboard</h1>
+    <p class="text-muted">Overview of your inventory system</p>
+</div>
+
+<!-- Stats Cards -->
+<div class="row">
+    <div class="col-md-3 mb-4">
+        <div class="card h-100">
+            <div class="card-body d-flex align-items-center">
+                <div class="icon-box bg-primary text-white">
+                    <i class="fas fa-box"></i>
+                </div>
+                <div class="ms-3">
+                    <h6 class="card-subtitle text-muted">Total Products</h6>
+                    <h2 class="card-title mb-0">{{ product_count }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card h-100">
+            <div class="card-body d-flex align-items-center">
+                <div class="icon-box bg-success text-white">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <div class="ms-3">
+                    <h6 class="card-subtitle text-muted">Locations</h6>
+                    <h2 class="card-title mb-0">{{ location_count }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card h-100">
+            <div class="card-body d-flex align-items-center">
+                <div class="icon-box bg-info text-white">
+                    <i class="fas fa-exchange-alt"></i>
+                </div>
+                <div class="ms-3">
+                    <h6 class="card-subtitle text-muted">Movements</h6>
+                    <h2 class="card-title mb-0">{{ movement_count }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card h-100">
+            <div class="card-body d-flex align-items-center">
+                <div class="icon-box bg-warning text-white">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="ms-3">
+                    <h6 class="card-subtitle text-muted">Low Stock Items</h6>
+                    <h2 class="card-title mb-0">{{ low_stock_count }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row -->
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">Product Distribution by Location</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="locationChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">Stock Levels</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="stockChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Movements Table -->
+<div class="card">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">Recent Movements</h5>
+        <a href="{{ url_for('movements') }}" class="btn btn-sm btn-primary">View All</a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Product</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Quantity</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for movement in recent_movements %}
+                    <tr>
+                        <td>{{ movement.id }}</td>
+                        <td>{{ movement.product.product_id }}</td>
+                        <td>{{ movement.from_location.location_id if movement.from_location else 'N/A' }}</td>
+                        <td>{{ movement.to_location.location_id if movement.to_location else 'N/A' }}</td>
+                        <td>{{ movement.qty }}</td>
+                        <td>{{ movement.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center py-4">No recent movements found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Location Distribution Chart
+    const locationCtx = document.getElementById('locationChart').getContext('2d');
+    const locationChart = new Chart(locationCtx, {
+        type: 'pie',
+        data: {
+            labels: ['Warehouse', 'Store', 'Supplier', 'Customer'],
+            datasets: [{
+                data: [40, 25, 20, 15],
+                backgroundColor: [
+                    '#4361ee', '#3a0ca3', '#4895ef', '#4cc9f0', '#f72585',
+                    '#7209b7', '#3f37c9', '#560bad', '#480ca8', '#b5179e'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'right',
+                }
+            }
+        }
+    });
+    
+    // Stock Levels Chart
+    const stockCtx = document.getElementById('stockChart').getContext('2d');
+    const stockChart = new Chart(stockCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ product_labels|tojson|safe }},
+            datasets: [{
+                label: 'Current Stock',
+                data: {{ stock_data|tojson|safe }},
+                backgroundColor: '#4361ee',
+                borderColor: '#3f37c9',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}
