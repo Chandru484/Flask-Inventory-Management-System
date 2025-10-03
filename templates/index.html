@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Welcome to StockMaster{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <h1 class="display-4 mb-4">Welcome to StockMaster</h1>
+            <p class="lead mb-5">Your complete inventory management solution</p>
+            
+            <div class="row mb-5">
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-box fa-3x mb-3 text-primary"></i>
+                            <h5 class="card-title">Manage Products</h5>
+                            <p class="card-text">Track all your products in one place</p>
+                            <a href="{{ url_for('products') }}" class="btn btn-secondary">View Products</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-map-marker-alt fa-3x mb-3 text-success"></i>
+                            <h5 class="card-title">Manage Locations</h5>
+                            <p class="card-text">Organize your inventory locations</p>
+                            <a href="{{ url_for('locations') }}" class="btn btn-secondary">View Locations</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-exchange-alt fa-3x mb-3 text-info"></i>
+                            <h5 class="card-title">Track Movements</h5>
+                            <p class="card-text">Monitor inventory movements</p>
+                            <a href="{{ url_for('movements') }}" class="btn btn-secondary">View Movements</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <a href="{{ url_for('dashboard') }}" class="btn btn-lg btn-primary">Go to Dashboard</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

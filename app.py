@@ -20,8 +20,13 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
 
-# Routes for Dashboard (Home Page)
+# Route for Index (Welcome Page)
 @app.route('/')
+def index():
+    return render_template('index.html')
+
+# Routes for Dashboard
+@app.route('/dashboard')
 def dashboard():
     # Count statistics
     product_count = Product.query.count()
