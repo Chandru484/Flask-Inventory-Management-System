@@ -1,1 +1,0 @@
-# Flask-Inventory-Management-System
