@@ -35,6 +35,10 @@ A Flask-based web application for managing inventory across multiple locations. 
    python -m venv venv
    venv\Scripts\activate
 
+3. To Run this project:
+   ```bash
+   python app.py
+
 
 
   <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/431951bc-3b34-447d-b1d3-72954dab563f" />
