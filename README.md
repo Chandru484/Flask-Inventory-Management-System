@@ -1,6 +1,6 @@
 # Inventory Management System - StockMaster
 
-A Flask-based web application for managing inventory across multiple locations. This system allows tracking of products, locations, and product movements between locations.
+A Flask-based web application for managing inventory across multiple locations. This system allows tracking of products, locations, and product movements between locations.This application does a CRUD operations of Create,Read,Update,Delete in inventory system.
 
 ## Features
 
@@ -40,12 +40,16 @@ A Flask-based web application for managing inventory across multiple locations. 
    python app.py
 
 
+<img width="1907" height="968" alt="image" src="https://github.com/user-attachments/assets/537cbb6a-11ef-4fbf-ba36-fbb571b45f70" />
+<img width="1888" height="977" alt="image" src="https://github.com/user-attachments/assets/3f2a7ebc-d745-4465-9e25-6cf9908a09be" />
+<img width="1895" height="975" alt="image" src="https://github.com/user-attachments/assets/8dfa028a-7386-471c-a322-4352b6ed81c1" />
+<img width="1880" height="970" alt="image" src="https://github.com/user-attachments/assets/8913f639-7618-4e71-9f4c-6bfaadc86ea5" />
+<img width="1886" height="976" alt="image" src="https://github.com/user-attachments/assets/59334570-d88b-4af5-afca-3766d48ea378" />
 
-  <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/431951bc-3b34-447d-b1d3-72954dab563f" />
-  <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/a35ac618-2d4a-4a84-8d93-4160cc5b7519" />
-  <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/a6609829-b65a-4cfa-ab79-72a6bc18bd3c" />
-  <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/2f18fe13-7d15-49d7-95d0-c1e3a80c9d0c" />
-  <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/c005639a-e8af-4953-ba71-c1b53e944f43" />
+
+
+
+
 
 
 
