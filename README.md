@@ -45,6 +45,8 @@ A Flask-based web application for managing inventory across multiple locations. 
 <img width="1895" height="975" alt="image" src="https://github.com/user-attachments/assets/8dfa028a-7386-471c-a322-4352b6ed81c1" />
 <img width="1880" height="970" alt="image" src="https://github.com/user-attachments/assets/8913f639-7618-4e71-9f4c-6bfaadc86ea5" />
 <img width="1886" height="976" alt="image" src="https://github.com/user-attachments/assets/59334570-d88b-4af5-afca-3766d48ea378" />
+<img width="1878" height="974" alt="image" src="https://github.com/user-attachments/assets/8cd7c664-6081-4ba6-a0ca-df3c3a0ac6f4" />
+
 
 
 
