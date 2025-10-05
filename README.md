@@ -61,48 +61,45 @@ Alternatively to run with Gunicorn (production-like):
 - DATABASE_URL — SQLAlchemy DB URL (defaults to sqlite:///inventory.db). If using Heroku-style `postgres://` it will be auto-converted.
 
 ## Project structure
-
-```text
 inventory_management/
-├── app.py
-├── build.js
-├── DEPLOYMENT.md
-├── models.py
-├── netlify.toml
-├── README.md
-├── requirements.txt
-├── seed_data.py
-├── vercel.json
-├── instance/
-│   └── inventory.db
-├── static/
+│
+├── app.py                     # Main Flask application (routes & configuration)
+├── models.py                  # Database models using SQLAlchemy
+├── seed_data.py               # Optional: Script to insert sample data
+├── requirements.txt           # Python dependencies
+├── instances/                 # Database instance folder
+│   └── inventory.db           # SQLite database (auto-generated at runtime)
+│
+├── templates/                 # HTML templates (Jinja2)
+│   ├── base.html              # Common layout & navigation bar
+│   ├── index.html             # Home/Dashboard page
+│   ├── dashboard.html         # Inventory overview page
+│   │
+│   ├── add_product.html       # Form to add new products
+│   ├── edit_product.html      # Form to edit products
+│   ├── products.html          # View list of products
+│   │
+│   ├── add_location.html      # Form to add new locations
+│   ├── edit_location.html     # Form to edit locations
+│   ├── locations.html         # View list of locations
+│   │
+│   ├── add_movement.html      # Form to add new movements
+│   ├── edit_movement.html     # Form to edit movements
+│   ├── movements.html         # View all product movements
+│   │
+│   └── report.html            # Inventory balance report
+│
+├── static/                    # Static assets (CSS, JS, Images)
 │   ├── css/
-│   │   └── style.css
+│   │   └── style.css          # Stylesheet for the app
+│   │
 │   └── js/
-│       ├── components.js
-│       └── main.js
-├── templates/
-│   ├── add_location.html
-│   ├── add_movement.html
-│   ├── add_product.html
-│   ├── base.html
-│   ├── dashboard.html
-│   ├── edit_location.html
-│   ├── edit_movement.html
-│   ├── edit_product.html
-│   ├── index.html
-│   ├── locations.html
-│   ├── movements.html
-│   ├── products.html
-│   └── report.html
-└── venv/
-    └── Scripts/
-        ├── flask.exe
-        └── python.exe
-```
+│       ├── components.js      # Reusable JS components or utilities
+│       └── main.js            # Main JavaScript logic
+├── README.md                  # Project documentation
 
 
-Screenshots
+## Screenshots
 
 <img width="1907" height="968" alt="image" src="https://github.com/user-attachments/assets/537cbb6a-11ef-4fbf-ba36-fbb571b45f70" />
 <img width="1888" height="977" alt="image" src="https://github.com/user-attachments/assets/3f2a7ebc-d745-4465-9e25-6cf9908a09be" />
