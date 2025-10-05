@@ -19,6 +19,14 @@ A Flask-based web application for managing inventory across multiple locations. 
   - If from_location is NULL → product moved into location
   - If to_location is NULL → product moved out of location
 
+## Tech stack
+- Python 3.8+
+- Flask, Jinja2
+- SQLAlchemy (ORM)
+- SQLite (dev) / PostgreSQL (prod)
+- Bootstrap (UI)
+- Gunicorn (WSGI)
+
 ## Setup Instructions
 
 ### Prerequisites
@@ -26,19 +34,64 @@ A Flask-based web application for managing inventory across multiple locations. 
 - Python 3.8 or higher
 - pip (Python package manager)
 
-### Installation
+## Quick start (Windows)
+1. Clone the repo:
+   git clone <your-repo-url>
+   cd inventory_management
 
-1. Clone the repository or download the source code
-
-2. Create and activate a virtual environment (optional but recommended):
-   ```bash
+2. Create and activate a venv:
    python -m venv venv
    venv\Scripts\activate
 
-3. To Run this project:
-   ```bash
-   python app.py
+3. Install dependencies:
+   pip install -r requirements.txt
 
+4. Run locally:
+   set FLASK_APP=app.py
+   set FLASK_ENV=development
+   python app.py
+   Open http://127.0.0.1:5000
+
+Alternatively to run with Gunicorn (production-like):
+   pip install gunicorn
+   gunicorn app:app
+
+## Environment variables
+- SECRET_KEY — Flask secret key (default: inventory_management_secret_key)
+- DATABASE_URL — SQLAlchemy DB URL (defaults to sqlite:///inventory.db). If using Heroku-style `postgres://` it will be auto-converted.
+
+## Project structure
+inventory_management\
+├─ app.py
+├─ models.py
+├─ requirements.txt
+├─ instances 
+│  ├─ inventory.db         # optional (generated at runtime)
+├─ templates\
+│  ├─ add_location.html
+│  ├─ add_movement.html
+│  ├─ add_product.html
+│  ├─ base.html
+│  ├─ dashboard.html
+│  ├─ edit_location.html
+│  ├─ edit_movement.html
+│  ├─ edit_product.html
+│  ├─ index.html
+│  ├─ locations.html
+│  ├─ movements.html
+│  ├─ products.html
+│  └─ report.html
+├─ static\
+│  ├─ css\
+│  │  └─ style.css
+│  └─ js\
+│     └─ components.js
+│     └─ main.js
+│   
+├─ seed_data.py
+└─ README.md
+
+Screenshots
 
 <img width="1907" height="968" alt="image" src="https://github.com/user-attachments/assets/537cbb6a-11ef-4fbf-ba36-fbb571b45f70" />
 <img width="1888" height="977" alt="image" src="https://github.com/user-attachments/assets/3f2a7ebc-d745-4465-9e25-6cf9908a09be" />
