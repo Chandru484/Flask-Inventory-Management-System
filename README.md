@@ -61,13 +61,14 @@ Alternatively to run with Gunicorn (production-like):
 - DATABASE_URL — SQLAlchemy DB URL (defaults to sqlite:///inventory.db). If using Heroku-style `postgres://` it will be auto-converted.
 
 ## Project structure
+```bash
 inventory_management/
 │
 ├── app.py                     # Main Flask application (routes & configuration)
 ├── models.py                  # Database models using SQLAlchemy
 ├── seed_data.py               # Optional: Script to insert sample data
 ├── requirements.txt           # Python dependencies
-├── instances/                 # Database instance folder
+├── instance/                  # Database instance folder
 │   └── inventory.db           # SQLite database (auto-generated at runtime)
 │
 ├── templates/                 # HTML templates (Jinja2)
@@ -97,6 +98,8 @@ inventory_management/
 │       ├── components.js      # Reusable JS components or utilities
 │       └── main.js            # Main JavaScript logic
 ├── README.md                  # Project documentation
+```
+
 
 
 ## Screenshots
