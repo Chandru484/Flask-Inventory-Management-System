@@ -9,8 +9,10 @@ from models import db, Product, Location, ProductMovement
 
 # Initialize Flask app
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'inventory_management_secret_key'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///inventory.db'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'inventory_management_secret_key')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///inventory.db')
+if app.config['SQLALCHEMY_DATABASE_URI'].startswith('postgres://'):
+    app.config['SQLALCHEMY_DATABASE_URI'] = app.config['SQLALCHEMY_DATABASE_URI'].replace('postgres://', 'postgresql://', 1)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize the db with the app
@@ -396,4 +398,5 @@ if __name__ == '__main__':
     if not os.path.exists('static'):
         os.makedirs('static')
         
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=False)
