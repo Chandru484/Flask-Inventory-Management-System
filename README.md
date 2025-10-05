@@ -60,43 +60,46 @@ Alternatively to run with Gunicorn (production-like):
 - SECRET_KEY — Flask secret key (default: inventory_management_secret_key)
 - DATABASE_URL — SQLAlchemy DB URL (defaults to sqlite:///inventory.db). If using Heroku-style `postgres://` it will be auto-converted.
 
-## Project structure
+## Project Structure
+
 inventory_management/
 │
-├── app.py                     # Main Flask application (routes & configuration)
-├── models.py                  # Database models using SQLAlchemy
-├── seed_data.py               # Optional: Script to insert sample data
-├── requirements.txt           # Python dependencies
-├── instances/                 # Database instance folder
-│   └── inventory.db           # SQLite database (auto-generated at runtime)
+├── app.py                  # Main Flask application (routes & configuration)
+├── models.py               # Database models using SQLAlchemy
+├── seed_data.py            # Optional: Script to insert sample data
+├── requirements.txt        # Python dependencies
+├── README.md               # Project documentation
 │
-├── templates/                 # HTML templates (Jinja2)
-│   ├── base.html              # Common layout & navigation bar
-│   ├── index.html             # Home/Dashboard page
-│   ├── dashboard.html         # Inventory overview page
-│   │
-│   ├── add_product.html       # Form to add new products
-│   ├── edit_product.html      # Form to edit products
-│   ├── products.html          # View list of products
-│   │
-│   ├── add_location.html      # Form to add new locations
-│   ├── edit_location.html     # Form to edit locations
-│   ├── locations.html         # View list of locations
-│   │
-│   ├── add_movement.html      # Form to add new movements
-│   ├── edit_movement.html     # Form to edit movements
-│   ├── movements.html         # View all product movements
-│   │
-│   └── report.html            # Inventory balance report
+├── instances/              # Database instance folder
+│   └── inventory.db        # SQLite database (auto-generated at runtime)
 │
-├── static/                    # Static assets (CSS, JS, Images)
+├── templates/              # HTML templates (Jinja2)
+│   ├── base.html           # Common layout & navigation bar
+│   ├── index.html          # Home/Dashboard page
+│   ├── dashboard.html      # Inventory overview page
+│   │
+│   ├── add_product.html    # Form to add new products
+│   ├── edit_product.html   # Form to edit products
+│   ├── products.html       # View list of products
+│   │
+│   ├── add_location.html   # Form to add new locations
+│   ├── edit_location.html  # Form to edit locations
+│   ├── locations.html      # View list of locations
+│   │
+│   ├── add_movement.html   # Form to add new movements
+│   ├── edit_movement.html  # Form to edit movements
+│   ├── movements.html      # View all product movements
+│   │
+│   └── report.html         # Inventory balance report
+│
+├── static/                 # Static assets (CSS, JS, Images)
 │   ├── css/
-│   │   └── style.css          # Stylesheet for the app
+│   │   └── style.css       # Stylesheet for the app
 │   │
 │   └── js/
-│       ├── components.js      # Reusable JS components or utilities
-│       └── main.js            # Main JavaScript logic
-├── README.md                  # Project documentation
+│       ├── components.js   # Reusable JS components or utilities
+│       └── main.js         # Main JavaScript logic
+
 
 
 Screenshots
