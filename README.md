@@ -61,42 +61,45 @@ Alternatively to run with Gunicorn (production-like):
 - DATABASE_URL — SQLAlchemy DB URL (defaults to sqlite:///inventory.db). If using Heroku-style `postgres://` it will be auto-converted.
 
 ## Project structure
+
+```text
 inventory_management/
-│
-├── app.py                     # Main Flask application (routes & configuration)
-├── models.py                  # Database models using SQLAlchemy
-├── seed_data.py               # Optional: Script to insert sample data
-├── requirements.txt           # Python dependencies
-├── instances/                 # Database instance folder
-│   └── inventory.db           # SQLite database (auto-generated at runtime)
-│
-├── templates/                 # HTML templates (Jinja2)
-│   ├── base.html              # Common layout & navigation bar
-│   ├── index.html             # Home/Dashboard page
-│   ├── dashboard.html         # Inventory overview page
-│   │
-│   ├── add_product.html       # Form to add new products
-│   ├── edit_product.html      # Form to edit products
-│   ├── products.html          # View list of products
-│   │
-│   ├── add_location.html      # Form to add new locations
-│   ├── edit_location.html     # Form to edit locations
-│   ├── locations.html         # View list of locations
-│   │
-│   ├── add_movement.html      # Form to add new movements
-│   ├── edit_movement.html     # Form to edit movements
-│   ├── movements.html         # View all product movements
-│   │
-│   └── report.html            # Inventory balance report
-│
-├── static/                    # Static assets (CSS, JS, Images)
+├── app.py
+├── build.js
+├── DEPLOYMENT.md
+├── models.py
+├── netlify.toml
+├── README.md
+├── requirements.txt
+├── seed_data.py
+├── vercel.json
+├── instance/
+│   └── inventory.db
+├── static/
 │   ├── css/
-│   │   └── style.css          # Stylesheet for the app
-│   │
+│   │   └── style.css
 │   └── js/
-│       ├── components.js      # Reusable JS components or utilities
-│       └── main.js            # Main JavaScript logic
-├── README.md                  # Project documentation
+│       ├── components.js
+│       └── main.js
+├── templates/
+│   ├── add_location.html
+│   ├── add_movement.html
+│   ├── add_product.html
+│   ├── base.html
+│   ├── dashboard.html
+│   ├── edit_location.html
+│   ├── edit_movement.html
+│   ├── edit_product.html
+│   ├── index.html
+│   ├── locations.html
+│   ├── movements.html
+│   ├── products.html
+│   └── report.html
+└── venv/
+    └── Scripts/
+        ├── flask.exe
+        └── python.exe
+```
 
 
 Screenshots
