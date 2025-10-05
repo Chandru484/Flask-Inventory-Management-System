@@ -102,7 +102,7 @@ inventory_management/
 
 
 
-Screenshots
+## Screenshots
 
 <img width="1907" height="968" alt="image" src="https://github.com/user-attachments/assets/537cbb6a-11ef-4fbf-ba36-fbb571b45f70" />
 <img width="1888" height="977" alt="image" src="https://github.com/user-attachments/assets/3f2a7ebc-d745-4465-9e25-6cf9908a09be" />
