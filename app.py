@@ -21,6 +21,17 @@ db.init_app(app)
 # Create database tables
 with app.app_context():
     db.create_all()
+    # Safe migration: ensure product_name column exists (for SQLite)
+    try:
+        conn = db.engine.connect()
+        try:
+            cols = [row[1] for row in conn.exec_driver_sql('PRAGMA table_info(product)').fetchall()]
+            if 'product_name' not in cols:
+                conn.exec_driver_sql('ALTER TABLE product ADD COLUMN product_name VARCHAR(100)')
+        finally:
+            conn.close()
+    except Exception:
+        pass
 
 # Route for Index (Welcome Page)
 @app.route('/')
@@ -73,7 +84,12 @@ def dashboard():
 # Routes for Products
 @app.route('/products')
 def products():
-    products = Product.query.all()
+    try:
+        products = Product.query.all()
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error loading products: {e}', 'danger')
+        products = []
     return render_template('products.html', products=products)
 
 # Search route
@@ -92,6 +108,7 @@ def search():
 def add_product():
     if request.method == 'POST':
         product_id = request.form['product_id']
+        product_name = request.form.get('product_name')
         
         # Check if product_id already exists
         existing_product = Product.query.filter_by(product_id=product_id).first()
@@ -100,7 +117,7 @@ def add_product():
             return redirect(url_for('add_product'))
         
         # Create new product
-        new_product = Product(product_id=product_id)
+        new_product = Product(product_id=product_id, product_name=product_name)
         db.session.add(new_product)
         db.session.commit()
         
@@ -115,6 +132,7 @@ def edit_product(product_id):
     
     if request.method == 'POST':
         new_product_id = request.form['product_id']
+        new_product_name = request.form.get('product_name')
         
         # Check if the new product_id already exists (if changed)
         if new_product_id != product_id:
@@ -125,6 +143,7 @@ def edit_product(product_id):
         
         # Update product
         product.product_id = new_product_id
+        product.product_name = new_product_name
         db.session.commit()
         
         flash('Product updated successfully!', 'success')
@@ -219,7 +238,12 @@ def delete_location(location_id):
 # Routes for Product Movements
 @app.route('/movements')
 def movements():
-    movements = ProductMovement.query.order_by(ProductMovement.timestamp.desc()).all()
+    try:
+        movements = ProductMovement.query.order_by(ProductMovement.timestamp.desc()).all()
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error loading movements: {e}', 'danger')
+        movements = []
     return render_template('movements.html', movements=movements)
 
 @app.route('/movements/add', methods=['GET', 'POST'])
@@ -232,12 +256,39 @@ def add_movement():
         from_location = request.form.get('from_location') or None
         to_location = request.form.get('to_location') or None
         qty = int(request.form['qty'])
+
+        # Basic validations
+        if qty <= 0:
+            flash('Quantity must be a positive number!', 'danger')
+            return render_template('add_movement.html', products=products, locations=locations)
         
         # Validate that at least one location is specified
         if not from_location and not to_location:
             flash('Either source or destination location must be specified!', 'danger')
             return render_template('add_movement.html', products=products, locations=locations)
-        
+
+        # Prevent negative stock: when moving OUT from a location, ensure sufficient stock
+        if from_location:
+            incoming = db.session.query(db.func.sum(ProductMovement.qty)).filter(
+                ProductMovement.product_id == product_id,
+                ProductMovement.to_location == from_location
+            ).scalar() or 0
+
+            outgoing = db.session.query(db.func.sum(ProductMovement.qty)).filter(
+                ProductMovement.product_id == product_id,
+                ProductMovement.from_location == from_location
+            ).scalar() or 0
+
+            available = incoming - outgoing
+
+            # If no stock available at source, block any outward/transfer movement
+            if available <= 0:
+                flash('No stock available at the source location for this product.', 'danger')
+                return render_template('add_movement.html', products=products, locations=locations)
+            if qty > available:
+                flash(f'Insufficient stock at source location. Available: {available}', 'danger')
+                return render_template('add_movement.html', products=products, locations=locations)
+
         # Create new movement
         new_movement = ProductMovement(
             product_id=product_id,
@@ -262,15 +313,52 @@ def edit_movement(movement_id):
     locations = Location.query.all()
     
     if request.method == 'POST':
-        movement.product_id = request.form['product_id']
-        movement.from_location = request.form.get('from_location') or None
-        movement.to_location = request.form.get('to_location') or None
-        movement.qty = int(request.form['qty'])
-        
+        new_product_id = request.form['product_id']
+        new_from_location = request.form.get('from_location') or None
+        new_to_location = request.form.get('to_location') or None
+        new_qty = int(request.form['qty'])
+
+        if new_qty <= 0:
+            flash('Quantity must be a positive number!', 'danger')
+            return render_template('edit_movement.html', movement=movement, products=products, locations=locations)
+
         # Validate that at least one location is specified
-        if not movement.from_location and not movement.to_location:
+        if not new_from_location and not new_to_location:
             flash('Either source or destination location must be specified!', 'danger')
             return render_template('edit_movement.html', movement=movement, products=products, locations=locations)
+
+        # Prevent negative stock at the source after update.
+        if new_from_location:
+            incoming = db.session.query(db.func.sum(ProductMovement.qty)).filter(
+                ProductMovement.product_id == new_product_id,
+                ProductMovement.to_location == new_from_location
+            ).scalar() or 0
+
+            outgoing = db.session.query(db.func.sum(ProductMovement.qty)).filter(
+                ProductMovement.product_id == new_product_id,
+                ProductMovement.from_location == new_from_location
+            ).scalar() or 0
+
+            available = incoming - outgoing
+
+            # If the original movement was also outgoing from the same source, add its qty back for availability check
+            if movement.from_location == new_from_location and movement.product_id == new_product_id:
+                available += movement.qty
+
+            # If no stock available at source, block any outward/transfer movement
+            if available <= 0:
+                flash('No stock available at the source location for this product.', 'danger')
+                return render_template('edit_movement.html', movement=movement, products=products, locations=locations)
+
+            if new_qty > available:
+                flash(f'Insufficient stock at source location. Available: {available}', 'danger')
+                return render_template('edit_movement.html', movement=movement, products=products, locations=locations)
+
+        # Apply updates
+        movement.product_id = new_product_id
+        movement.from_location = new_from_location
+        movement.to_location = new_to_location
+        movement.qty = new_qty
         
         db.session.commit()
         flash('Product movement updated successfully!', 'success')
@@ -296,6 +384,7 @@ def report():
     
     # Initialize the balance report data structure
     balance_report = []
+    any_zero_balance = False
     
     # Calculate balance for each product at each location
     for product in products:
@@ -312,84 +401,30 @@ def report():
                 ProductMovement.from_location == location.location_id
             ).scalar() or 0
             
-            # Calculate balance
-            balance = incoming - outgoing
-            
-            # Only add to report if there's a non-zero balance
-            if balance != 0:
+            # Calculate balance and clamp negatives to zero
+            raw_balance = incoming - outgoing
+            clamped_balance = max(0, raw_balance)
+
+            # Track if there are zero-balance entries
+            if clamped_balance == 0 and (incoming != 0 or outgoing != 0):
+                any_zero_balance = True
+
+            # Include rows where there has been any movement (incoming or outgoing)
+            # or where positive balance exists
+            if (incoming != 0 or outgoing != 0) or clamped_balance > 0:
                 balance_report.append({
                     'product': product,
                     'location': location,
-                    'quantity': balance
+                    'quantity': clamped_balance
                 })
     
+    # Warn if there are any zero-quantity items in the report
+    if any_zero_balance:
+        flash('Some products show zero quantity at certain locations. Outgoing movements are blocked for zero stock.', 'warning')
+
     return render_template('report.html', balance_report=balance_report)
 
-# Dashboard functionality moved to the top of the file
-    recent_movements = ProductMovement.query.order_by(ProductMovement.timestamp.desc()).limit(5).all()
-    
-    # Data for location distribution chart
-    locations = Location.query.all()
-    location_labels = [loc.location_id for loc in locations]
-    location_data = []
-    
-    # Data for stock levels chart
-    products = Product.query.all()
-    product_labels = [prod.product_id for prod in products]
-    product_stock = []
-    
-    # Calculate stock for each product at each location
-    for product in products:
-        total_stock = 0
-        for location in locations:
-            # Calculate stock at this location
-            stock_in = db.session.query(func.sum(ProductMovement.qty)).filter(
-                ProductMovement.product_id == product.product_id,
-                ProductMovement.to_location_id == location.id
-            ).scalar() or 0
-            
-            stock_out = db.session.query(func.sum(ProductMovement.qty)).filter(
-                ProductMovement.product_id == product.product_id,
-                ProductMovement.from_location_id == location.id
-            ).scalar() or 0
-            
-            location_stock = stock_in - stock_out
-            total_stock += max(0, location_stock)
-            
-        product_stock.append(total_stock)
-        if total_stock < 10:  # Example threshold for low stock
-            low_stock_count += 1
-    
-    # Calculate items per location for the pie chart
-    for location in locations:
-        location_total = 0
-        for product in products:
-            stock_in = db.session.query(func.sum(ProductMovement.qty)).filter(
-                ProductMovement.product_id == product.product_id,
-                ProductMovement.to_location_id == location.id
-            ).scalar() or 0
-            
-            stock_out = db.session.query(func.sum(ProductMovement.qty)).filter(
-                ProductMovement.product_id == product.product_id,
-                ProductMovement.from_location_id == location.id
-            ).scalar() or 0
-            
-            product_at_location = stock_in - stock_out
-            if product_at_location > 0:
-                location_total += product_at_location
-        
-        location_data.append(location_total)
-    
-    return render_template('dashboard.html', 
-                          product_count=product_count,
-                          location_count=location_count,
-                          movement_count=movement_count,
-                          low_stock_count=low_stock_count,
-                          recent_movements=recent_movements,
-                          location_labels=location_labels,
-                          location_data=location_data,
-                          product_labels=product_labels,
-                          product_stock=product_stock)
+# (Removed duplicate, unreachable dashboard code that caused errors)
 
 if __name__ == '__main__':
     # Create directories if they don't exist
@@ -399,4 +434,5 @@ if __name__ == '__main__':
         os.makedirs('static')
         
     port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=False)
+    app.run(host='0.0.0.0', port=port, debug=True)
+    

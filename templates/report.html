@@ -20,8 +20,8 @@
             </thead>
             <tbody>
                 {% for item in balance_report %}
-                <tr>
-                    <td>{{ item.product.product_id }}</td>
+                <tr class="{% if item.quantity == 0 %}qty-zero{% else %}qty-positive{% endif %}">
+                    <td>{{ item.product.product_name or item.product.product_id }}</td>
                     <td>{{ item.location.location_id }}</td>
                     <td>{{ item.quantity }}</td>
                 </tr>

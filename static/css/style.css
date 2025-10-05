@@ -220,6 +220,16 @@ body {
     vertical-align: middle;
 }
 
+/* Highlight rows where quantity is exactly zero */
+.qty-zero {
+    background-color: #fff3cd; /* soft warning background */
+}
+
+/* Explicit white background for positive quantities to avoid inherited row colors */
+.qty-positive {
+    background-color: #ffffff;
+}
+
 /* Button Styles */
 .btn {
     border-radius: 5px;

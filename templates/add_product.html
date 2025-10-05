@@ -12,8 +12,12 @@
     <div class="card-body">
         <form method="POST">
             <div class="mb-3">
-                <label for="product_id" class="form-label">Product Name</label>
-                <input type="text" class="form-control" id="product_id" name="product_id" required>
+                <label for="product_id" class="form-label">Product ID</label>
+                <input type="text" class="form-control" id="product_id" name="product_id" placeholder="e.g., SKU-12345" required>
+            </div>
+            <div class="mb-3">
+                <label for="product_name" class="form-label">Product Name</label>
+                <input type="text" class="form-control" id="product_name" name="product_name" placeholder="e.g., Apple iPhone 15">
             </div>
             <button type="submit" class="btn btn-primary">Save Product</button>
         </form>

@@ -27,7 +27,7 @@
                 <tr>
                     <td>{{ movement.movement_id }}</td>
                     <td>{{ movement.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
-                    <td>{{ movement.product.product_id }}</td>
+                    <td>{{ movement.product.product_name if movement.product and movement.product.product_name else movement.product_id }}</td>
                     <td>{{ movement.source.location_id if movement.source else 'N/A' }}</td>
                     <td>{{ movement.destination.location_id if movement.destination else 'N/A' }}</td>
                     <td>{{ movement.qty }}</td>
